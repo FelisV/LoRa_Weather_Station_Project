@@ -25,7 +25,7 @@
 <p> 
     <img src="images/Hardware.png" alt="Hardware Image" width="350" height="300">
     <figcaption>Hardware used in the project, image copied from: 
-        <a href="https://wiki.seeedstudio.com/Seeeduino_LoRAWAN/" target="_blank">Wiki Seeedstudio</a>. 
+    <a href="https://wiki.seeedstudio.com/Seeeduino_LoRAWAN/" target="_blank">Wiki Seeedstudio</a>
         For more information, click the link.
       </figcaption>
 </p>
