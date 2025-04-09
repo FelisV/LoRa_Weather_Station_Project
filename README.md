@@ -23,10 +23,9 @@
   
 <h2 id="hardware">Hardware</h2>
 <p> 
-    <img src="images/Hardware.png" alt="Hardware Image" width="300" height="150">
-    <figcaption>Hardware used in the project, 
-    <a href="https://wiki.seeedstudio.com/Seeeduino_LoRAWAN/" target="_blank">Wiki Seeedstudio</a>
-        For more information, click the link.
+    <img src="images/Hardware.png" alt="Hardware Image" width="300" height="200">
+    <figcaption>Hardware used in the project, For more information, click the link
+    <a href="https://wiki.seeedstudio.com/Seeeduino_LoRAWAN/" target="_blank">Wiki Seeedstudio.</a>
       </figcaption>
 </p>
   
