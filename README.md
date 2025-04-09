@@ -65,23 +65,15 @@
 tests/                      # Main folder for the tests
     sensors/                # Main folder for the sensor project
         main/               # Main folder containing the main test script
+                                -> Testing each sensor individually;
+                                -> Combine and test the sensors simultaneously, as well as the sensor readings, to verify proper integration;
         screenshots/        # Folder for all screenshots
         all_sensors/        # Screenshots for all sensors combined
         BMP280/             # Screenshots for BMP280 tests <img src="images/BMP280.png" alt="BMP280 Image" width="50" height="20" style="vertical-align: middle;"> <a href="https://wiki.seeedstudio.com/Grove-Barometer_Sensor-BMP280/" target="_blank">Wiki Seeedstudio BMP280</a>
+                                -> Modes, Standby, Oversampling, Pressure and Temperature readings;
         DHT20/              # Screenshots for DHT20 tests <img src="images/DHT20.png" alt="DHT20 Image" width="50" height="20" style="vertical-align: middle;"> <a href="https://wiki.seeedstudio.com/Grove-Temperature-Humidity-Sensor-DH20/" target="_blank">Wiki Seeedstudio DHT20</a>
-</pre>     
-        About the other folders:
-            main:
-                The main/ folder contains the main test script inside. This script allows:
-                    - Testing each sensor individually;
-                    - Combine and test the sensors simultaneously, as well as the sensor readings, to verify proper integration;
-            screenshots:
-                The screenshots/ folder contains screenshots of tests performed, organized into subfolders:
-                    - all_sensors/ -> Contains results of tests where all sensors are working together;
-                    - BMP280/ -> Screenshots of BMP280 tests (modes, standby, oversampling, pressure and temperature readings);
-                    - DHT20/ ->  Screenshots of DHT20 tests (temperature and humidity readings);
-</p>
-  
+                                -> Temperature and Humidity readings;
+</pre>    
 <h2 id="Lora Interface">Lora Interface</h2>
   <p>
 
