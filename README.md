@@ -8,7 +8,7 @@
     <li><a href="#introduction">Introduction</a></li>
     <li><a href="#hardware">Hardware</a></li>
     <li><a href="#software">Software</a></li>
-    <li><a href="#libraries-installation">Libraries installation</a></li>
+    <li><a href="#IDEA-libraries-installation">IDE and Libraries Installation</a></li>
     <li><a href="#sensor-module">Sensor Module</a></li>
     <li><a href="#Lora Interface">Lora Interface</a></li>
     <li><a href="#requirements">Requirements</a></li>
@@ -37,14 +37,7 @@
     <li>LoRa Interface (Contains the script responsible for LoRaWAN communication and data transmission);</li>
 </ul>
   
-<h2 id="libraries-installation">Libraries and Installation</h2>
-<p>
-    The libs/ folder stores all libraries used in the project, divided into:
-</p>    
-<ul>
-    <li>external/ -> Contains external libraries;</li>
-    <li>custom/ -> Includes custom libraries developed for this project to improve sensor integration;</li>
-</ul>
+<h2 id="IDEA-libraries-installation">IDE and Libraries Installation</h2>
 <p>
     <strong>Arduino IDE setup:</strong><br>
     Here are a few quick steps:
@@ -60,7 +53,7 @@
     </li>
     <li>Open Arduino IDE and configure the board settings.</li>
     <li>Set the correct board and port in the IDE.</li>
-  </ol>
+  </ol>  
 <p>
     <strong>Installing Libraries in Arduino IDE:</strong><br>
     To install the libraries, follow these steps:
@@ -71,7 +64,13 @@
     <li> Select the .zip file from libs/external and libs/custom;</li>
     <li> The libraries will now be available;</li>
 </ol>    
-
+<p>
+    The libs/ folder stores all libraries used in the project, divided into:
+</p>    
+<ul>
+    <li>external/ -> Contains external libraries;</li>
+    <li>custom/ -> Includes custom libraries developed for this project to improve sensor integration;</li>
+</ul>
 <h2 id ="sensor-module">Sensor Module</h2>
 <p>
   <p>The sensor module was developed to collect and analyze environmental data using the BMP280, DHT20 and GPS sensors. 
