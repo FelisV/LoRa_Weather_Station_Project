@@ -55,19 +55,21 @@
 
 <h2 id ="sensor-module">Sensor Module</h2>
 <p>
-    <p>The sensor module was developed to collect and analyze environmental data using the BMP280, DHT20 and GPS sensors. 
-    Is structured into different folders for better organization and ease of use.  </p>
-        Module Struture is organized as follows:
-        
-        |── tests/                       # Main folder for the tests
-        |    ├── sensors/                # Main folder for the sensor project
-        |    │   ├── main/               # Main folder containing the main test script
-        |    │   ├── screenshots/        # Folder for all screenshots
-        |    │   │   ├── all_sensors/    # Screenshots for all sensors combined
-        |    │   │   ├── BMP280/         # Screenshots for BMP280 tests
-        |    │   │   ├── DHT20/          # Screenshots for DHT20 tests
-        |    │   │   ├── tests/          # Main folder for the tests
-    
+  <p>The sensor module was developed to collect and analyze environmental data using the BMP280, DHT20 and GPS sensors. 
+  It is structured into different folders for better organization and ease of use.</p>
+
+  Module Structure is organized as follows:
+</p>
+
+<pre>
+tests/                      # Main folder for the tests
+    sensors/                # Main folder for the sensor project
+        main/               # Main folder containing the main test script
+        screenshots/        # Folder for all screenshots
+        all_sensors/        # Screenshots for all sensors combined
+        BMP280/             # Screenshots for BMP280 tests <img src="images/BMP280.png" alt="BMP280 Image" width="50" height="20" style="vertical-align: middle;"> <a href="https://wiki.seeedstudio.com/Grove-Barometer_Sensor-BMP280/" target="_blank">Wiki Seeedstudio BMP280</a>
+        DHT20/              # Screenshots for DHT20 tests <img src="images/DHT20.png" alt="DHT20 Image" width="50" height="20" style="vertical-align: middle;"> <a href="https://wiki.seeedstudio.com/Grove-Temperature-Humidity-Sensor-DH20/" target="_blank">Wiki Seeedstudio DHT20</a>
+</pre>     
         About the other folders:
             main:
                 The main/ folder contains the main test script inside. This script allows:
