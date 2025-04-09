@@ -45,7 +45,26 @@
     <li>external/ -> Contains external libraries;</li>
     <li>custom/ -> Includes custom libraries developed for this project to improve sensor integration;</li>
 </ul>
-<p>Installing Libraries in Arduino IDE:</p>
+<p>
+    <strong>Arduino IDE setup:</strong><br>
+    Here are a few quick steps:
+  </p>
+  
+  <ol>
+    <li>Download the latest version of Arduino IDE: 
+      <a href="https://www.arduino.cc/en/software" target="_blank">Download from the official website.</a>
+    </li>
+    <li>Install the Seeedstudio driver (necessary for the Seeeduino LoRaWAN board).<br>
+      You can follow the instructions on the 
+      <a href="https://wiki.seeedstudio.com/Seeeduino_LoRAWAN/" target="_blank">Seeedstudio Wiki</a>, under "Install the Driver (For Windows)".
+    </li>
+    <li>Open Arduino IDE and configure the board settings.</li>
+    <li>Set the correct board and port in the IDE.</li>
+  </ol>
+<p>
+    <strong>Installing Libraries in Arduino IDE:</strong><br>
+    To install the libraries, follow these steps:
+</p>
 <ol>
     <li> Open Arduino IDE;</li>
     <li> Navigate to Sketch -> Include Library -> Add.ZIP Library...;</li>
