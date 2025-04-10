@@ -86,10 +86,10 @@ tests/                      # Main folder for the tests
                                 -> Testing each sensor individually;
                                 -> Combine and test the sensors simultaneously, as well as the sensor readings, to verify proper integration;
         screenshots/        # Folder for all screenshots
-        all_sensors/        # Screenshots for all sensors combined
-        BMP280/             # Screenshots for BMP280 tests <img src="images/BMP280.png" alt="BMP280 Image" width="50" height="20"> <a href="https://wiki.seeedstudio.com/Grove-Barometer_Sensor-BMP280/" target="_blank">Wiki Seeedstudio BMP280</a>
+            all_sensors/        # Screenshots for all sensors combined
+            BMP280/             # Screenshots for BMP280 tests <img src="images/BMP280.png" alt="BMP280 Image" width="50" height="20"> <a href="https://wiki.seeedstudio.com/Grove-Barometer_Sensor-BMP280/" target="_blank">Wiki Seeedstudio BMP280</a>
                                 -> Modes, Standby, Oversampling, Pressure and Temperature readings;
-        DHT20/              # Screenshots for DHT20 tests <img src="images/DHT20.png" alt="DHT20 Image" width="50" height="20"> <a href="https://wiki.seeedstudio.com/Grove-Temperature-Humidity-Sensor-DH20/" target="_blank">Wiki Seeedstudio DHT20</a>
+            DHT20/              # Screenshots for DHT20 tests <img src="images/DHT20.png" alt="DHT20 Image" width="50" height="20"> <a href="https://wiki.seeedstudio.com/Grove-Temperature-Humidity-Sensor-DH20/" target="_blank">Wiki Seeedstudio DHT20</a>
                                 -> Temperature and Humidity readings;
 </pre>    
 <h2 id="Lora Interface">Lora Interface</h2>
