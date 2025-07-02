@@ -12,6 +12,8 @@ RTCInt rtc;
 #define DEV_EUI "70B3D57ED006F7D8"
 #define APP_KEY "C4C3B34C4DF922628196685A7ABE2125"
 #define WAIT_TIME 30
+#define BATTERYSENDCOOLDOWN 5
+#define GPSSENDCOOLDOWN 10
 
 unsigned long last_gps_sent_time;
 
@@ -32,6 +34,9 @@ typedef struct
 unsigned char error_flags = 0b10000000;
 unsigned char prev_error_flags = 0x7F;
 
+uint8_t batteryNotSentTimes = 0;
+uint8_t gpsNotSentTimes = 0;
+
 void printError(unsigned char val) {
   for (int i = 7; i >= 0; i--) {
     Serial.print((val >> i) & 1);
@@ -50,7 +55,7 @@ void blink()
   }
 }
 
-short encodeValue(float value, float min, float step) {
+int encodeValue(float value, float min, float step) {
     return round((value - min) / step);
 }
 
@@ -141,7 +146,7 @@ void setup() {
 
   //  ----------------------------------- Init Batt --------------------------------------
 
-  pinMode(Sensors::get_Pin_Battery_Status(), INPUT);
+  pinMode(A5, INPUT);
 
   // ----------------------------------------------------------------------------------
 
@@ -149,85 +154,150 @@ void setup() {
 }
 
 void loop() {
+  if(gpsNotSentTimes >= GPSSENDCOOLDOWN) 
+  {
+    gpsNotSentTimes = 0;
+    // GPS:
+    if(sensors.readGPS()){
+      error_flags &= ~(1 << 5);
+    } else {
+      error_flags |= (1 << 5);
+    }
 
-  error_flags &= ~( (1 << 1) | (1 << 3) | (1 << 5) | (1 << 7));
-  // BMP280:
-  if(sensors.readBMP280(Adafruit_BMP280::MODE_NORMAL)){
-    //sensors.debug_BMP280_data();
-  } else {
+    if(error_flags != prev_error_flags) 
+    {
+      //lora_interface.SendMessage((unsigned char *)&error_flags, 1, 1);
+      printError(error_flags);
+      prev_error_flags = error_flags;
+    } else 
+    {
+      float LAT = sensors.get_GPS_Latitude();
+      float LON = sensors.get_GPS_Longitude();
+      Serial.print(LAT);
+      Serial.print("%\n");
+      Serial.print(LON);
+      Serial.print("%\n");
+
+      float lat_min = -90.0;
+      float lat_range = 180.0;
+      float lon_min = -180.0;
+      float lon_range = 360.0;
+
+      float lat_step = lat_range / (1 << 24); // ≈ 0.0000107°
+      float lon_step = lon_range / (1 << 24); // ≈ 0.0000215°
+
+      uint32_t encoded_lat = encodeValue(lat, lat_min, lat_step);
+      uint32_t encoded_lon = encodeValue(lon, lon_min, lon_step);
+
+      uint8_t buffer[6];
+
+      // Latitude (3 bytes)
+      buffer[0] = (encoded_lat >> 16) & 0xFF;
+      buffer[1] = (encoded_lat >> 8) & 0xFF;
+      buffer[2] = encoded_lat & 0xFF;
+
+      // Longitude (3 bytes)
+      buffer[3] = (encoded_lon >> 16) & 0xFF;
+      buffer[4] = (encoded_lon >> 8) & 0xFF;
+      buffer[5] = encoded_lon & 0xFF;
+
+      //lora_interface.SendMessage((unsigned char *)buffer, 6, 1);
+    }
+  }
+  else if(batteryNotSentTimes >= BATTERYSENDCOOLDOWN) 
+  {
+    batteryNotSentTimes = 0;
+    // BAT:
+    if(sensors.update_Battery_Status()){
+      error_flags &= ~(1 << 6);
+    } else {
+      error_flags |= (1 << 6);
+    }
+    
+    if(error_flags != prev_error_flags) 
+    {
+      //lora_interface.SendMessage((unsigned char *)&error_flags, 1, 1);
+      printError(error_flags);
+      prev_error_flags = error_flags;
+    } else 
+    {
+      uint8_t battLevel = sensors.get_Battery_Voltage();
+
+      if(battLevel > 127) 
+      {
+        battLevel = 127;
+      }
+
+      battLevel = battLevel & 0x7F;
+
+
+      Serial.print(battLevel);
+      Serial.print("%\n");
+
+      //lora_interface.SendMessage((unsigned char *)&battLevel, 1, 1);
+    }
+  } else 
+  {
+    // BMP280:
+    if(sensors.readBMP280(Adafruit_BMP280::MODE_NORMAL)){
+      error_flags &= ~(1 << 1);
+    } else {
       error_flags |= (1 << 1);
+    }
+    // DHT20:
+    if(sensors.readDHT()){
+      error_flags &= ~(1 << 3);
+    } else {
+      error_flags |= (1 << 3);
+    }
+
+    if(error_flags != prev_error_flags) 
+    {
+      //lora_interface.SendMessage((unsigned char *)&error_flags, 1, 1);
+      printError(error_flags);
+      prev_error_flags = error_flags;
+    } else
+    {
+      float tempSum = 0;
+      float tempValues = 0;
+
+      if(!((error_flags >> 1) & 0x01)) 
+      {
+        tempSum += sensors.get_BMP280_temp();
+        tempValues++;
+      }
+      if(!((error_flags >> 3) & 0x01)) 
+      {
+        tempSum += sensors.get_DHT_Temp();
+        tempValues++;
+      }
+
+      float tempMean = tempSum/tempValues;
+
+      uint8_t tempEncoded = encodeValue(tempMean, -40, 0.5);     // 8 bits
+      uint16_t pressureEncoded = encodeValue(sensors.get_BMP280_pressure(), 300, 1);    // 10 bits
+      uint8_t rhEncoded = encodeValue(sensors.get_DHT_Humidity(), 0, 3);        // 6 bits
+
+      // Pack: [RH:6][Pressure:10][Temp:8] = total 24 bits
+      uint32_t packed = 0;
+      packed |= ((uint32_t)rhEncoded & 0x3F) << 18;
+      packed |= ((uint32_t)pressureEncoded & 0x3FF) << 8;
+      packed |= ((uint32_t)tempEncoded & 0xFF);
+
+      //lora_interface.SendMessage((unsigned char *)&packed, 3, 1);
+      Serial.print(tempEncoded);
+      Serial.print("ºC\n");
+      Serial.print(pressureEncoded);
+      Serial.print("hpa\n");
+      Serial.print(rhEncoded);
+      Serial.print("%\n");
+
+      
+    }
+
   }
-  // DHT20:
-  if(sensors.readDHT()){
-    //sensors.debug_DHT_data();
-  } else {
-    error_flags |= (1 << 3);
-  } 
-
-  // GPS:
-  if(sensors.readGPS()){
-    //sensors.debug_GPS_data();
-  } else {
-    error_flags |= (1 << 5);
-  }
-
-  // BAT:
-  if(sensors.update_Battery_Status()){
-    /*
-    Serial.print("Battery Voltage: ");
-    Serial.print(sensors.get_Battery_Voltage());
-    Serial.print("%, Status: ");
-    Serial.println(sensors.get_Battery_Status());
-    */
-  } else {
-    error_flags |= (1 << 6);
-  }
-
-
-  if(error_flags != prev_error_flags) 
-  {
-    //lora_interface.SendMessage((unsigned char *)&error_flags, 1, 1);
-    printError(error_flags);
-    prev_error_flags = error_flags;
-  } else
-  {
-    uint8_t tempEncoded = encodeValue(((sensors.get_BMP280_temp() + sensors.get_DHT_Temp()) / 2), -40, 0.5);     // 8 bits
-    uint16_t pressureEncoded = encodeValue(sensors.get_BMP280_pressure(), 300, 1);    // 10 bits
-    uint8_t rhEncoded = encodeValue(sensors.get_DHT_Humidity(), 0, 3);        // 6 bits
-
-    // Pack: [RH:6][Pressure:10][Temp:8] = total 24 bits
-    uint32_t packed = 0;
-    packed |= ((uint32_t)rhEncoded & 0x3F) << 18;
-    packed |= ((uint32_t)pressureEncoded & 0x3FF) << 8;
-    packed |= ((uint32_t)tempEncoded & 0xFF);
-
-    //lora_interface.SendMessage((unsigned char *)&packed, 3, 1);
-    Serial.print(tempEncoded);
-    Serial.print("ºC\n");
-    Serial.print(pressureEncoded);
-    Serial.print("hpa\n");
-    Serial.print(rhEncoded);
-    Serial.print("%\n");
-  }
-
-  /*
-  uint8_t battLevel = sensors.get_Battery_Voltage();
-
-  if(battLevel > 127) 
-  {
-    battLevel = 127;
-  }
-
-  battLevel = battLevel & 0x7F;
-
-  Serial.print("Sensors Read\n");
-  lora_interface.SendMessage((unsigned char *)&packed, 3, 1);
-  //lora_interface.SendMessage((unsigned char *)&battLevel, 1, 1);
-  Serial.print("Sent\n");
-  */
   blink();
-
-
+  
   delay(5000);
   //nrgSave.standby();  //now mcu go to standby
 }
